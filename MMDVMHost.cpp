@@ -27,6 +27,7 @@
 #include "Thread.h"
 #include "Log.h"
 #include "GitVersion.h"
+#include "Event.h"
 
 #include <cstdio>
 #include <vector>
@@ -265,6 +266,8 @@ int CMMDVMHost::run()
 
 	LogMessage("MMDVMHost-%s is starting", VERSION);
 	LogMessage("Built %s %s (GitID #%.7s)", __TIME__, __DATE__, gitversion);
+
+	LogMessage(CEvent().toJsonString().c_str());
 
 	readParams();
 
