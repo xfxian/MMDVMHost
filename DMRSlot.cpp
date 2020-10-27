@@ -25,6 +25,7 @@
 #include "Sync.h"
 #include "CRC.h"
 #include "Log.h"
+#include "Event.h"
 
 #include <cassert>
 #include <ctime>
@@ -292,6 +293,8 @@ bool CDMRSlot::writeModem(unsigned char *data, unsigned int len)
 			}
 
 			LogMessage("DMR Slot %u, received RF voice header from %s to %s%s", m_slotNo, src.c_str(), flco == FLCO_GROUP ? "TG " : "", dst.c_str());
+
+			CDmrEvent(E_DMR_RF_VOICE_HEADER, m_slotNo, srcId, src, dstId, 0, 0, 0).log();
 
 			return true;
 		} else if (dataType == DT_VOICE_PI_HEADER) {

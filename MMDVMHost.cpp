@@ -108,6 +108,8 @@ int main(int argc, char** argv)
 			::LogInfo("MMDVMHost-%s is restarting on receipt of SIGHUP", VERSION);
 	} while (m_signal == 1);
 
+	CSystemEvent(E_SYSTEM_SHUTDOWN, E_STRING_NONE, E_STRING_NONE, ret).log();
+
 	::LogFinalise();
 
 	return ret;
@@ -267,7 +269,11 @@ int CMMDVMHost::run()
 	LogMessage("MMDVMHost-%s is starting", VERSION);
 	LogMessage("Built %s %s (GitID #%.7s)", __TIME__, __DATE__, gitversion);
 
-	LogMessage(CEvent().toJsonString().c_str());
+	CSystemEvent(
+		E_SYSTEM_STARTUP,
+		std::string(VERSION),
+		std::string(gitversion))
+		.log();
 
 	readParams();
 
