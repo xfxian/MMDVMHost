@@ -96,12 +96,12 @@ static bool LogOpen()
 
 bool LogInitialise(bool daemon, const std::string& filePath, const std::string& fileRoot, unsigned int fileLevel, unsigned int displayLevel, unsigned int timestampLogs)
 {
-	m_filePath     = filePath;
-	m_fileRoot     = fileRoot;
-	m_fileLevel    = fileLevel;
-	m_displayLevel = displayLevel;
-	m_timestampLogs   = timestampLogs;
-	m_daemon       = daemon;
+	m_filePath      = filePath;
+	m_fileRoot      = fileRoot;
+	m_fileLevel     = fileLevel;
+	m_displayLevel  = displayLevel;
+	m_timestampLogs = timestampLogs;
+	m_daemon        = daemon;
 
 	if (m_daemon)
 		m_displayLevel = 0U;
