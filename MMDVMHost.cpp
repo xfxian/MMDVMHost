@@ -90,10 +90,12 @@ int main(int argc, char** argv)
 
 	int ret = 0;
 
+	CEvents *events = new CEvents(1, "", "", 0, "", 0, 0);
+
 	do {
 		m_signal = 0;
 
-		CMMDVMHost* host = new CMMDVMHost(std::string(iniFile));
+		CMMDVMHost* host = new CMMDVMHost(std::string(iniFile), events);
 		ret = host->run();
 
 		delete host;
@@ -108,14 +110,15 @@ int main(int argc, char** argv)
 			::LogInfo("MMDVMHost-%s is restarting on receipt of SIGHUP", VERSION);
 	} while (m_signal == 1);
 
-	CSystemEvent(E_SYSTEM_SHUTDOWN, E_STRING_NONE, E_STRING_NONE, ret).log();
+	events->publish(new CSystemEvent(E_SYSTEM_SHUTDOWN, E_STRING_NONE, E_STRING_NONE, ret));
+	delete events;
 
 	::LogFinalise();
 
 	return ret;
 }
 
-CMMDVMHost::CMMDVMHost(const std::string& confFile) :
+CMMDVMHost::CMMDVMHost(const std::string& confFile, CEvents *events) :
 m_conf(confFile),
 m_modem(NULL),
 m_dstar(NULL),
@@ -168,7 +171,8 @@ m_lockFileName(),
 m_gpsd(NULL),
 #endif
 m_remoteControl(NULL),
-m_fixedMode(false)
+m_fixedMode(false),
+m_events(events)
 {
 }
 
@@ -269,11 +273,10 @@ int CMMDVMHost::run()
 	LogMessage("MMDVMHost-%s is starting", VERSION);
 	LogMessage("Built %s %s (GitID #%.7s)", __TIME__, __DATE__, gitversion);
 
-	CSystemEvent(
+	m_events->publish(new CSystemEvent(
 		E_SYSTEM_STARTUP,
 		std::string(VERSION),
-		std::string(gitversion))
-		.log();
+		std::string(gitversion)));
 
 	readParams();
 
@@ -534,7 +537,7 @@ int CMMDVMHost::run()
 				break;
 		}
 
-		m_dmr = new CDMRControl(id, colorCode, callHang, selfOnly, embeddedLCOnly, dumpTAData, prefixes, blackList, whiteList, slot1TGWhiteList, slot2TGWhiteList, m_timeout, m_modem, m_dmrNetwork, m_display, m_duplex, m_dmrLookup, rssi, jitter, ovcm);
+		m_dmr = new CDMRControl(id, colorCode, callHang, selfOnly, embeddedLCOnly, dumpTAData, prefixes, blackList, whiteList, slot1TGWhiteList, slot2TGWhiteList, m_timeout, m_modem, m_dmrNetwork, m_display, m_duplex, m_dmrLookup, rssi, jitter, ovcm, m_events);
 
 		m_dmrTXTimer.setTimeout(txHang);
 	}
@@ -1260,7 +1263,6 @@ bool CMMDVMHost::createModem()
 		bool         cosInvert          = m_conf.getFMCOSInvert();
 		unsigned int rfAudioBoost       = m_conf.getFMRFAudioBoost();
 		float        maxDevLevel        = m_conf.getFMMaxDevLevel();
-		unsigned int extAudioBoost      = m_conf.getFMExtAudioBoost();
 
 		LogInfo("FM Parameters");
 		LogInfo("    Callsign: %s", callsign.c_str());

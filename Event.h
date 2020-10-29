@@ -11,7 +11,7 @@
 class CEvent
 {
 public:
-    ~CEvent();
+    virtual ~CEvent() = 0;
 
     virtual std::string toJsonString() const = 0;
     void log(unsigned int level = 2U) const;

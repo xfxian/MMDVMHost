@@ -72,7 +72,7 @@ const unsigned int NO_PREAMBLE_CSBK   = 15U;
 
 // #define	DUMP_DMR
 
-CDMRSlot::CDMRSlot(unsigned int slotNo, unsigned int timeout) :
+CDMRSlot::CDMRSlot(unsigned int slotNo, unsigned int timeout, CEvents* events) :
 m_slotNo(slotNo),
 m_queue(5000U, "DMR Slot"),
 m_rfState(RS_RF_LISTENING),
@@ -118,7 +118,8 @@ m_minRSSI(0U),
 m_aveRSSI(0U),
 m_rssiCount(0U),
 m_enabled(true),
-m_fp(NULL)
+m_fp(NULL),
+m_events(events)
 {
 	m_lastFrame = new unsigned char[DMR_FRAME_LENGTH_BYTES + 2U];
 
@@ -294,7 +295,7 @@ bool CDMRSlot::writeModem(unsigned char *data, unsigned int len)
 
 			LogMessage("DMR Slot %u, received RF voice header from %s to %s%s", m_slotNo, src.c_str(), flco == FLCO_GROUP ? "TG " : "", dst.c_str());
 
-			CDmrEvent(E_DMR_RF_VOICE_HEADER, m_slotNo, srcId, src, dstId, 0, 0, 0).log();
+			m_events->publish(new CDmrEvent(E_DMR_RF_VOICE_HEADER, m_slotNo, srcId, src, dstId, 0, 0, 0));
 
 			return true;
 		} else if (dataType == DT_VOICE_PI_HEADER) {

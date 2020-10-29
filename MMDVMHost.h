@@ -40,6 +40,7 @@
 #include "Conf.h"
 #include "GPSD.h"
 #include "UMP.h"
+#include "Events.h"
 
 #include <string>
 
@@ -48,7 +49,7 @@
 class CMMDVMHost
 {
 public:
-  CMMDVMHost(const std::string& confFile);
+  CMMDVMHost(const std::string& confFile, CEvents *events);
   ~CMMDVMHost();
 
   int run();
@@ -107,6 +108,7 @@ private:
 #endif
   CRemoteControl* m_remoteControl;
   bool            m_fixedMode;
+  CEvents*        m_events;
 
   void readParams();
   bool createModem();

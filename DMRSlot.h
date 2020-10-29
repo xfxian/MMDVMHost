@@ -34,6 +34,7 @@
 #include "Timer.h"
 #include "Modem.h"
 #include "DMRLC.h"
+#include "Events.h"
 
 #include <vector>
 
@@ -47,7 +48,7 @@ enum ACTIVITY_TYPE {
 
 class CDMRSlot {
 public:
-	CDMRSlot(unsigned int slotNo, unsigned int timeout);
+	CDMRSlot(unsigned int slotNo, unsigned int timeout, CEvents* events);
 	~CDMRSlot();
 
 	bool writeModem(unsigned char* data, unsigned int len);
@@ -111,6 +112,7 @@ private:
 	unsigned int               m_rssiCount;
 	bool                       m_enabled;
 	FILE*                      m_fp;
+	CEvents*                   m_events;
 
 	static unsigned int        m_colorCode;
 

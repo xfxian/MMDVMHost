@@ -56,6 +56,15 @@ public:
   std::string  getLogFileRoot() const;
   unsigned int getLogTimestampLogs() const;
 
+  // The Events section
+  unsigned int getEventsPublishToFile() const;
+  std::string  getEventsFilePath() const;
+  std::string  getEventsFileRoot() const;
+  unsigned int getEventsPublishToRemote() const;
+  std::string  getEventsRemoteAddress() const;
+  unsigned int getEventsRemotePort() const;
+  unsigned int getEventsLocalPort() const;
+  
   // The CW ID section
   bool         getCWIdEnabled() const;
   unsigned int getCWIdTime() const;
